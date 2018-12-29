@@ -61,17 +61,19 @@ public class WindowControls extends PApplet {
 			public void run() {
 				windowProjectionFloor.setActiveEffect(new Effect8Dots(windowProjectionFloor, 0));
 				
+				timer.schedule(new TimerTask() {
+					
+					@Override
+					public void run() {
+						windowProjectionDJ.setActiveEffect(new EffectSnow(windowProjectionDJ, 1));
+						
+					}
+				}, 2000);
+				
 			}
 		}, 2000);
 		
-		timer.schedule(new TimerTask() {
-			
-			@Override
-			public void run() {
-				windowProjectionDJ.setActiveEffect(new EffectSnow(windowProjectionDJ, 1));
-				
-			}
-		}, 3000);
+		
 		
 		
 		

@@ -38,7 +38,7 @@ public class Effect8Dots extends EffectHueAutoChanger {
 	
 	@Override
 	public void draw() {
-		super.draw();
+		incrementHue(0.1f);
 		weight = PApplet.parseInt(weightSlider.getValue());
 		points = PApplet.parseInt(pointSlider.getValue());
 
@@ -94,11 +94,6 @@ public class Effect8Dots extends EffectHueAutoChanger {
 	@Override
 	public String getName() {
 		return "8Dots";
-	}
-
-	@Override
-	public float getHueIncrementAmount() {
-		return 0.1f;
 	}
 
 }

@@ -12,7 +12,7 @@ import processing.core.PApplet;
 public class EffectSnow extends EffectHueAutoChanger {
 
 	private Slider radiusSlider, speedSlider;
-	private LinkedList<Float> r, x, y;
+	private LinkedList<Dot> dots;
 	private int px, py, pts;
 	private int lauf = 0;
 	
@@ -41,19 +41,20 @@ public class EffectSnow extends EffectHueAutoChanger {
 		px = PApplet.parseInt(getWindow().width/(2*radiusSlider.getValue()))+2;
 		py = PApplet.parseInt(getWindow().height/(2*radiusSlider.getValue()))+1;
 		pts = px*py;
-		x = new LinkedList<Float>();
-		y = new LinkedList<Float>();
-		r = new LinkedList<Float>();
+		dots = new LinkedList<Dot>();
 		for (int i=0;i<pts;i++) {
-			r.add(i, getWindow().random(radiusSlider.getValue()/10, radiusSlider.getValue()));
-			x.add(i, getWindow().random(0, radiusSlider.getValue()));
-			y.add(i, getWindow().random(0, radiusSlider.getValue()));
+			incrementHue(360f / (pts - 1));
+			float r = getWindow().random(radiusSlider.getValue()/10, radiusSlider.getValue());
+			float x = getWindow().random(0, radiusSlider.getValue());
+			float y = getWindow().random(0, radiusSlider.getValue());
+			dots.add(new Dot(x, y, r, getHue()));
 		}
 	}
 
 	@Override
 	public void draw() {
-		super.draw();
+		
+		incrementHue(0.1f);
 		
 		if (radiusSlider.isMousePressed()) {
 			calcPoints();
@@ -62,28 +63,30 @@ public class EffectSnow extends EffectHueAutoChanger {
 			translate(-getWindow().width/2-lauf*speedSlider.getValue()*10, -getWindow().height/2);
 			for (int i=0;i<pts;i++) {
 				float posx, posy;
-				posx = (2*radiusSlider.getValue()*(i%px))+x.get(i);
-				posy = (2*radiusSlider.getValue()*(i/px))+y.get(i);
-				getWindow().fill(getHue()%360, 100, 100);
-				getWindow().ellipse(posx, posy, r.get(i), r.get(i));
+				posx = (2*radiusSlider.getValue()*(i%px))+dots.get(i).x;
+				posy = (2*radiusSlider.getValue()*(i/px))+dots.get(i).y;
+				getWindow().fill(getHue() + dots.get(i).hue%360, 100, 100);
+				getWindow().ellipse(posx, posy, dots.get(i).r, dots.get(i).r);
 			}
 
 			if (lauf>=(2*radiusSlider.getValue()/(speedSlider.getValue()*10))-1) {  
-				x.add(x.remove());
-				y.add(y.remove());
-				r.add(r.remove());
+				dots.add(dots.remove());
 				lauf=0;
 			} 
 			else
 				lauf++;
 		}
 	}
-
-	@Override
-	public float getHueIncrementAmount() {
-		return 0.1f;
-	}
-
 	
+	private class Dot {
+		public final float x, y, r, hue;
+		
+		public Dot(float x, float y, float r, float hue) {
+			this.x = x;
+			this.y = y;
+			this.r = r;
+			this.hue = hue;
+		}
+	}
 
 }
